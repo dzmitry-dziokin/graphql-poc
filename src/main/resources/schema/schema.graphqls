@@ -1,0 +1,90 @@
+####### Queries #######
+type Query {
+    authors(
+        page: InputPage! = {pageNumber: 1 pageSize: 25},
+        filter: Filter,
+        sort: InputSort
+    ): PageableAuthorResponse!
+    authorsOne(firstName: String): [AuthorResponse!]!
+}
+
+# Types
+type AuthorResponse {
+    id: ID!  # Author Identifier
+    firstName: String!   # Author's first name
+    lastName: String!
+    dateOfBirth: LocalDate!
+}
+
+# Pageable types
+interface Pageable {
+    pageNumber: Int!
+    pageSize: Int!
+    total: Int!
+    sort: Sort!
+}
+
+# Sort
+type Sort {
+    orders: [Order!]!
+}
+
+type Order {
+    field: String!
+    order: SORT_ORDER!
+}
+
+# Pageable Author
+type PageableAuthorResponse implements Pageable {
+    pageNumber: Int!
+    pageSize: Int!
+    total: Int!
+    sort: Sort!
+    items: [AuthorResponse!]!
+}
+
+####### Inputs #######
+
+# Filter
+input Filter {
+    expression: Expression!
+    and: Filter
+    or: Filter
+}
+# Filter Expression
+input Expression {
+    field: String!
+    value: String!
+    match: FilterMatchType! = EQ
+}
+
+# Page
+input InputPage {
+    pageNumber: Int!
+    pageSize: Int!
+}
+
+# Sort
+input InputSort {
+    orders: [InputOrder!]
+}
+
+input InputOrder {
+    field: String!
+    order: SORT_ORDER! = ASC
+}
+
+####### Enumerations #######
+
+# Filter Expression Match Type
+enum FilterMatchType {
+    EQ
+    GT
+    LT
+}
+
+# Sort Order
+enum SORT_ORDER {
+    ASC
+    DESC
+}
